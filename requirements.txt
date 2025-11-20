@@ -1,0 +1,23 @@
+# FastAPI and web framework (Python 3.7 compatible versions)
+fastapi>=0.85.1
+uvicorn[standard]>=0.15.0
+python-multipart
+jinja2
+pydantic<2.0
+
+# Document processing
+PyPDF2
+python-docx
+pdfplumber
+
+# RAG and Vector DB (simplified for Python 3.7)
+langchain
+chromadb
+sentence-transformers
+
+# Database
+sqlalchemy
+
+# Utilities
+python-dotenv
+requests

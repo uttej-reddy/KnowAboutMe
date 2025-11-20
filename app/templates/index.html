@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ portfolio.name }} - Portfolio</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">{{ portfolio.name }}</h1>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#tech-stack">Tech Stack</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#ask-ai">Ask AI</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">{{ portfolio.name }}</h1>
+            <p class="hero-subtitle">{{ portfolio.title }}</p>
+            <p class="hero-bio">{{ portfolio.bio }}</p>
+            <div class="hero-links">
+                {% if portfolio.github %}
+                <a href="{{ portfolio.github }}" class="btn btn-primary" target="_blank">GitHub</a>
+                {% endif %}
+                {% if portfolio.linkedin %}
+                <a href="{{ portfolio.linkedin }}" class="btn btn-secondary" target="_blank">LinkedIn</a>
+                {% endif %}
+                <a href="mailto:{{ portfolio.email }}" class="btn btn-secondary">Contact</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="tech-stack" class="section">
+        <div class="container">
+            <h2 class="section-title">Tech Stack</h2>
+            <div class="tech-grid">
+                {% for tech in portfolio.tech_stack %}
+                <div class="tech-card">
+                    <h3>{{ tech.name }}</h3>
+                    <p class="tech-category">{{ tech.category }}</p>
+                    <p class="tech-proficiency">{{ tech.proficiency }}</p>
+                    {% if tech.years_experience %}
+                    <p class="tech-experience">{{ tech.years_experience }} years</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Experience</h2>
+            {% if portfolio.experiences %}
+            <div class="timeline">
+                {% for exp in portfolio.experiences %}
+                <div class="timeline-item">
+                    <h3>{{ exp.position }}</h3>
+                    <h4>{{ exp.company }}</h4>
+                    <p class="date">{{ exp.start_date }} - {% if exp.end_date %}{{ exp.end_date }}{% else %}Present{% endif %}</p>
+                    <p>{{ exp.description }}</p>
+                    <div class="tags">
+                        {% for tech in exp.technologies %}
+                        <span class="tag">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-center">No experience data available yet.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            {% if portfolio.projects %}
+            <div class="projects-grid">
+                {% for project in portfolio.projects %}
+                <div class="project-card">
+                    {% if project.image_url %}
+                    <img src="{{ project.image_url }}" alt="{{ project.name }}">
+                    {% endif %}
+                    <h3>{{ project.name }}</h3>
+                    <p>{{ project.description }}</p>
+                    <div class="tags">
+                        {% for tech in project.technologies %}
+                        <span class="tag">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="project-links">
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank">GitHub</a>
+                        {% endif %}
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" target="_blank">Live Demo</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-center">No projects added yet.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- AI Q&A Section -->
+    <section id="ask-ai" class="section bg-dark">
+        <div class="container">
+            <h2 class="section-title">Ask AI About Me</h2>
+            <p class="text-center">Ask questions about my experience, skills, or projects - powered by AI and web search!</p>
+
+            <!-- Question Input -->
+            <div class="question-section">
+                <h3>Ask a Question</h3>
+                <div class="question-input">
+                    <input type="text" id="questionInput" placeholder="e.g., What experience do you have with Python?">
+                    <button onclick="askQuestion()" class="btn btn-primary">Ask</button>
+                </div>
+                <div id="answerSection" class="answer-section"></div>
+            </div>
+
+            <!-- Sample Questions -->
+            <div class="sample-questions">
+                <h4>Sample Questions:</h4>
+                <ul>
+                    <li onclick="setQuestion('What programming languages do you know?')">What programming languages do you know?</li>
+                    <li onclick="setQuestion('Tell me about your work experience')">Tell me about your work experience</li>
+                    <li onclick="setQuestion('What projects have you worked on?')">What projects have you worked on?</li>
+                    <li onclick="setQuestion('What is your educational background?')">What is your educational background?</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 {{ portfolio.name }}. AI-Powered Portfolio with RAG.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

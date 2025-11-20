@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nul)",
+      "Bash(py --version)",
+      "Bash(venvScriptspython.exe -m pip list)",
+      "Bash(findstr:*)",
+      "Bash(./venv/Scripts/python.exe -m pip:*)",
+      "Bash(py:*)",
+      "Bash(start https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe)",
+      "Bash(./venv/Scripts/python.exe:*)",
+      "Bash(timeout /t 3)",
+      "Bash(start http://localhost:8000)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(taskkill /F /PID 16856)",
+      "Bash(netstat:*)",
+      "Bash(tskill:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
