@@ -15,10 +15,12 @@ class Experience(BaseModel):
     """Work experience entry"""
     company: str
     position: str
-    start_date: date
-    end_date: Optional[date] = None
+    location: Optional[str] = None
+    start_date: str
+    end_date: Optional[str] = None
     description: str
     technologies: List[str]
+    responsibilities: Optional[List[str]] = None
     achievements: Optional[List[str]] = None
 
 
@@ -30,16 +32,19 @@ class Project(BaseModel):
     github_url: Optional[str] = None
     live_url: Optional[str] = None
     image_url: Optional[str] = None
+    highlights: Optional[List[str]] = None
 
 
 class Education(BaseModel):
     """Education entry"""
     institution: str
     degree: str
-    field_of_study: str
-    start_date: date
-    end_date: Optional[date] = None
-    gpa: Optional[float] = None
+    field: str
+    graduation_date: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    gpa: Optional[str] = None
+    achievements: Optional[List[str]] = None
 
 
 class PortfolioData(BaseModel):

@@ -35,22 +35,105 @@ templates = Jinja2Templates(directory="app/templates")
 # Initialize services
 doc_parser = DocumentParser()
 
-# Sample portfolio data (replace with your actual data)
+# Portfolio data from resume
 PORTFOLIO_DATA = PortfolioData(
-    name="Your Name",
-    title="Software Engineer | Full Stack Developer",
-    bio="Passionate developer with experience in building scalable applications.",
-    email="your.email@example.com",
-    github="https://github.com/yourusername",
-    linkedin="https://linkedin.com/in/yourusername",
+    name="Uttej Reddy Thoompally",
+    title="Sr Software Engineer | Cloud Platform Architect",
+    bio="",
+    email="uttej.thoompally@gmail.com",
+    github="https://github.com/uttej-t",
+    linkedin="https://www.linkedin.com/in/uttej-t/",
     tech_stack=[
-        TechStack(name="Python", category="Language", proficiency="Expert", years_experience=5),
-        TechStack(name="FastAPI", category="Framework", proficiency="Expert", years_experience=3),
-        TechStack(name="React", category="Framework", proficiency="Intermediate", years_experience=2),
+        TechStack(name="Java", category="Language", proficiency="Expert", years_experience=10),
+        TechStack(name="C#", category="Language", proficiency="Expert", years_experience=8),
+        TechStack(name="Python", category="Language", proficiency="Expert", years_experience=7),
+        TechStack(name="Scala", category="Language", proficiency="Advanced", years_experience=4),
+        TechStack(name="SQL", category="Language", proficiency="Expert", years_experience=10),
+        TechStack(name="JavaScript", category="Language", proficiency="Advanced", years_experience=6),
+        TechStack(name="Azure", category="Cloud Platform", proficiency="Expert", years_experience=5),
+        TechStack(name="AWS", category="Cloud Platform", proficiency="Expert", years_experience=7),
+        TechStack(name="Docker", category="DevOps", proficiency="Expert", years_experience=6),
+        TechStack(name="Kubernetes", category="DevOps", proficiency="Advanced", years_experience=4),
+        TechStack(name="Kafka", category="Streaming", proficiency="Expert", years_experience=5),
+        TechStack(name="Spark", category="Big Data", proficiency="Expert", years_experience=5),
+        TechStack(name="Terraform", category="Infrastructure", proficiency="Advanced", years_experience=3),
+        TechStack(name="Grafana", category="Monitoring", proficiency="Advanced", years_experience=4),
+        TechStack(name="Spring Boot", category="Framework", proficiency="Expert", years_experience=8),
+        TechStack(name=".NET Core", category="Framework", proficiency="Expert", years_experience=6),
+        TechStack(name="ReactJS", category="Framework", proficiency="Intermediate", years_experience=3),
+        TechStack(name="Cosmos DB", category="Database", proficiency="Advanced", years_experience=4),
+        TechStack(name="Redis", category="Database", proficiency="Expert", years_experience=5),
+        TechStack(name="PostgreSQL", category="Database", proficiency="Expert", years_experience=8),
+        TechStack(name="MongoDB", category="Database", proficiency="Advanced", years_experience=6),
     ],
-    experiences=[],
-    projects=[],
-    education=[]
+    experiences=[
+        Experience(
+            company="",
+            position="",
+            location="",
+            start_date="",
+            end_date="",
+            description="Experienced software engineer with 10+ years of expertise in designing and building scalable backend services and platform infrastructure on Azure and AWS in Agile environments using Java, C#, Python, Kafka and Spark. Specialized in resilient distributed systems, microservices, cloud engineering, data engineering, data architecture, and cloud-native architecture with experience across automotive and e-commerce domains.",
+            technologies=[],
+            responsibilities=[]
+        )
+    ],
+    projects=[
+        Project(
+            name="Vehicle Telemetry Data Platform",
+            description="Designed and built end-to-end data platform for processing petabytes of vehicle telemetry data with real-time streaming and batch processing capabilities",
+            technologies=["Azure", "Databricks", "Kafka", "Spark", "Delta Lake", "Unity Catalog"],
+            github_url="",
+            live_url="",
+            highlights=[
+                "Processing petabytes of vehicle data in real-time",
+                "40% reduction in latency through optimized Kafka/Spark pipelines",
+                "20% cost reduction through Redis optimization"
+            ]
+        ),
+        Project(
+            name="Buy Online Pick Up Instore (BOPIS)",
+            description="Built complete guest experience for BOPIS feature on lululemon.com, enabling customers to purchase online and pick up in physical stores",
+            technologies=["Java", "Oracle ATG", "AWS", "JavaScript"],
+            github_url="",
+            live_url="",
+            highlights=[
+                "8-14% boost in store sales",
+                "Increased foot traffic to physical stores",
+                "Seamless integration with existing e-commerce platform"
+            ]
+        ),
+        Project(
+            name="Cloud Migration - Oracle to AWS",
+            description="Led migration of Oracle ATG applications from Oracle Managed Cloud to AWS infrastructure",
+            technologies=["AWS", "Oracle ATG", "Java"],
+            github_url="",
+            live_url="",
+            highlights=[
+                "Lift-and-shift approach for minimal disruption",
+                "Improved infrastructure flexibility and control",
+                "Enhanced scaling capabilities"
+            ]
+        )
+    ],
+    education=[
+        Education(
+            institution="University of Houston - Clear Lake",
+            degree="Master of Science",
+            field="Management Information Systems",
+            graduation_date="December 2013",
+            gpa="",
+            achievements=[]
+        ),
+        Education(
+            institution="Birla Institute of Technology and Science - Pilani, India",
+            degree="Bachelor of Science",
+            field="Information Systems",
+            graduation_date="May 2012",
+            gpa="",
+            achievements=[]
+        )
+    ]
 )
 
 

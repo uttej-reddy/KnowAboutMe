@@ -25,23 +25,10 @@ async function askQuestion() {
 
         if (response.ok) {
             let html = `
-                <h4>Question: ${question}</h4>
                 <div class="answer">
-                    <h5>Answer:</h5>
-                    <p>${data.answer}</p>
+                    <p>${data.answer.replace(/\n/g, '<br>')}</p>
                 </div>
             `;
-
-            if (data.sources && data.sources.length > 0) {
-                html += `
-                    <div class="sources">
-                        <h5>Sources:</h5>
-                        <ul>
-                            ${data.sources.map(source => `<li>${source}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            }
 
             answerSection.innerHTML = html;
         } else {

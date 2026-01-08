@@ -21,3 +21,6 @@ sqlalchemy
 # Utilities
 python-dotenv
 requests
+
+# AI/LLM
+openai

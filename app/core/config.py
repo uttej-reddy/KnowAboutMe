@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     """Application settings"""
 
     APP_NAME: str = "Portfolio"
-    APP_VERSION: str = "1.0.0"
+    APP_VERSION: str = "2026.1.0"
     DEBUG: bool = True
 
     # API Keys (optional)

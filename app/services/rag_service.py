@@ -8,6 +8,7 @@ import os
 import requests
 import json
 from urllib.parse import quote
+from openai import OpenAI
 
 
 class SimpleRAG:
@@ -28,6 +29,18 @@ class SimpleRAG:
             length_function=len,
         )
         self.vectorstore: Optional[Chroma] = None
+
+        # Initialize OpenAI client if API key is available
+        self.openai_client = None
+        if settings.OPENAI_API_KEY:
+            try:
+                self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
+                print("OpenAI client initialized successfully")
+            except Exception as e:
+                print(f"Failed to initialize OpenAI client: {e}")
+        else:
+            print("No OpenAI API key found. Responses will use basic context extraction.")
+
         self._initialize_vectorstore()
 
     def _initialize_vectorstore(self):
@@ -158,53 +171,10 @@ class SimpleRAG:
             for doc, score in results
         ]
 
-    def _extract_keywords(self, text: str, top_n: int = 5) -> List[str]:
-        """Extract important keywords from text"""
-        # Simple keyword extraction - filter common words
-        common_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-                       'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
-                       'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-                       'could', 'should', 'may', 'might', 'can', 'i', 'you', 'he', 'she',
-                       'it', 'we', 'they', 'what', 'when', 'where', 'who', 'how', 'why'}
-
-        words = text.lower().split()
-        keywords = [w.strip('.,!?;:()[]{}') for w in words
-                   if w.lower() not in common_words and len(w) > 3]
-
-        # Return unique keywords
-        return list(dict.fromkeys(keywords))[:top_n]
-
-    def _search_web(self, query: str) -> str:
-        """Search the web using DuckDuckGo"""
-        try:
-            # Use DuckDuckGo HTML search (no API key required)
-            url = f"https://html.duckduckgo.com/html/?q={quote(query)}"
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-
-            response = requests.get(url, headers=headers, timeout=5)
-
-            if response.status_code == 200:
-                # Extract text snippets from results (basic parsing)
-                text = response.text
-                # Simple extraction - get first few hundred characters of relevant content
-                start = text.find('result__snippet')
-                if start != -1:
-                    snippet_text = text[start:start+1000]
-                    # Clean HTML tags (very basic)
-                    import re
-                    clean_text = re.sub('<[^<]+?>', '', snippet_text)
-                    return clean_text[:500]
-
-            return ""
-        except Exception as e:
-            print(f"Web search error: {e}")
-            return ""
 
     def answer_question(self, question: str) -> Dict[str, Any]:
         """
-        Answer a question using RAG + Web Search
+        Answer a question using RAG from uploaded documents with OpenAI
 
         Args:
             question: User's question
@@ -212,47 +182,103 @@ class SimpleRAG:
         Returns:
             Dictionary with answer and sources
         """
-        answer_parts = []
-        sources = []
+        if self.vectorstore is None:
+            return {
+                "answer": "No documents have been loaded yet. Please ensure your resume and documents are in the ./data/documents/ directory.",
+                "sources": []
+            }
 
         # Get relevant documents from resume
-        if self.vectorstore is not None:
-            relevant_docs = self.search(question, k=2)
+        relevant_docs = self.search(question, k=5)
 
-            if relevant_docs:
-                context = "\n".join([doc["content"] for doc in relevant_docs])
-                sources.extend([doc["source"] for doc in relevant_docs])
+        if not relevant_docs:
+            return {
+                "answer": "I couldn't find relevant information in the uploaded documents to answer that question. Try asking about experience, skills, education, or projects.",
+                "sources": []
+            }
 
-                # Extract keywords from resume context
-                keywords = self._extract_keywords(context, top_n=3)
+        # Gather context from relevant chunks
+        context_parts = []
+        for doc in relevant_docs:
+            context_parts.append(doc["content"])
 
-                answer_parts.append(f"Based on my resume:\n{context[:300]}")
+        # Combine all relevant context
+        full_context = "\n\n".join(context_parts)
 
-                # Search web with resume keywords + question
-                if keywords:
-                    search_query = f"{' '.join(keywords)} {question}"
-                    web_results = self._search_web(search_query)
-
-                    if web_results:
-                        answer_parts.append(f"\n\nAdditional context from web search:\n{web_results}")
-                        sources.append("Web Search")
-
-        if not answer_parts:
-            # No resume data, try web search with question only
-            web_results = self._search_web(question)
-            if web_results:
-                answer_parts.append(f"Based on web search:\n{web_results}")
-                sources.append("Web Search")
-            else:
-                return {
-                    "answer": "I couldn't find relevant information to answer that question. Please ensure documents are placed in the ./data/documents/ directory.",
-                    "sources": []
-                }
+        # Generate answer using OpenAI if available, otherwise use basic extraction
+        if self.openai_client:
+            answer = self._generate_openai_answer(question, full_context)
+        else:
+            answer = self._generate_basic_answer(question, full_context)
 
         return {
-            "answer": "\n".join(answer_parts),
-            "sources": list(set(sources))
+            "answer": answer,
+            "sources": []  # Sources removed as per request
         }
+
+    def _generate_openai_answer(self, question: str, context: str) -> str:
+        """
+        Generate a dynamic answer using OpenAI GPT
+
+        Args:
+            question: User's question
+            context: Relevant context from documents
+
+        Returns:
+            Generated answer
+        """
+        try:
+            # Create a prompt that instructs GPT to answer in first person
+            system_prompt = """You are Uttej Reddy Thoompally, a Senior Software Engineer.
+Answer questions about your professional background in first person using the provided context from your resume.
+Be conversational, confident, and natural. Don't mention that you're looking at a resume or documents.
+Keep answers concise (2-3 paragraphs max) but informative."""
+
+            user_prompt = f"""Context from my resume:
+{context}
+
+Question: {question}
+
+Please answer this question naturally in first person, as if you're speaking in an interview."""
+
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",  # Using cost-effective model
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7,
+                max_tokens=500
+            )
+
+            return response.choices[0].message.content.strip()
+
+        except Exception as e:
+            print(f"OpenAI API error: {e}")
+            # Fallback to basic answer if OpenAI fails
+            return self._generate_basic_answer(question, context)
+
+    def _generate_basic_answer(self, question: str, context: str) -> str:
+        """
+        Generate a basic answer without OpenAI (fallback)
+
+        Args:
+            question: User's question
+            context: Relevant context from documents
+
+        Returns:
+            Basic extracted answer
+        """
+        # Return context with minimal formatting
+        answer = context[:1200]
+
+        # Clean up if cut off mid-sentence
+        if len(context) > 1200:
+            last_period = answer.rfind('.')
+            if last_period > 500:
+                answer = answer[:last_period + 1]
+
+        return answer
 
     def clear_vectorstore(self):
         """Clear all documents from vector store"""
